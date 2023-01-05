@@ -22,11 +22,15 @@ const getSortedScreens = () => {
   return Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
 }
 
+/*
+ * whichScreen: an int indicating which screen. Screens are indexed from the left-most.
+ * whichHalf: one of "left", "right", "maximized".
+ */
 const placeWindow = (window, whichScreen, whichHalf) => {
   const screen = getSortedScreens()[whichScreen];
   const frame = screen.flippedFrame();
-  const width = frame.width / 2 ;
-  const x = frame.x + (whichHalf == 1 ? width : 0);
+  const width = whichHalf == "maximized" ? frame.width: frame.width / 2;
+  const x = frame.x + (whichHalf == "right" ? width : 0);
   const destFrame = { x: x, y: frame.y, width: width, height: frame.height };
   window.setFrame(destFrame);
 }
@@ -128,15 +132,52 @@ const hideUnfocusedApps = () => {
   }
 };
 
+/*
+ * Moves all windows to thier defined position in the given layout.
+ * layout: a map of app name => [whichScreen, whichHalf]. See placeWindow().
+ */
+const applyLayout = (layout) => {
+  for (let [appName, properties] of Object.entries(layout)) {
+    const app = App.get(appName);
+    if (!app)
+      continue;
+    const windows = app.windows({ visible: true });
+    const [whichScreen, whichHalf] = properties;
+    for (let window of windows)
+      placeWindow(window, whichScreen, whichHalf);
+  }
+}
+
+// Where I generally want my windows.
+const windowLayout = {
+  "AnyList": [1, "right"],
+  "Emacs": [2, "maximized"],
+  "Firefox": [1, "right"],
+  "Google Chrome": [1, "maximized"],
+  "iTerm2": [1, "maximized"],
+  "Org": [1, "right"],
+  "PowerPoint": [1, "left"],
+  "SimpleNote": [1, "right"],
+  "Singlebox": [2, "left"],
+  "Slack": [1, "right"],
+  "Spotify": [2, "left"],
+  "SuperHuman": [1, "left"],
+  "System Preferences": [1, "left"],
+  "Terminal": [1, "left"],
+  "WhatsApp": [1, "right"],
+  "Xcode": [1, "right"]
+};
+
 const myModifiers = ["command", "control"];
 
 // Window placement
-Key.on("1", myModifiers, () => placeWindow(Window.focused(), 1, 0));
-Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, 1));
-Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, 0));
-Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, 1));
+Key.on("1", myModifiers, () => placeWindow(Window.focused(), 1, "left"));
+Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, "right"));
+Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, "left"));
+Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, "right"));
 Key.on("5", myModifiers, () => centerWindow(Window.focused()));
 Key.on("m", myModifiers, () => Window.focused().maximize());
+Key.on("'", myModifiers, () => applyLayout(windowLayout));
 
 // Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
