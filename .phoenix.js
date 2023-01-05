@@ -73,6 +73,13 @@ const launchOrFocus = (appName) => {
   }
 };
 
+const lockScreen = () => {
+  Task.run("/Users/phil/scripts/macos/lock_screen.sh", [], (task) => {
+    if (task.status != 0)
+      Phoenix.notify("Lock screen script did not successfully exit.");
+  });
+};
+
 const myModifiers = ["command", "control"];
 
 Key.on("1", myModifiers, () => placeWindow(Window.focused(), 1, 0));
@@ -95,3 +102,5 @@ Key.on("c", myModifiers, () => launchOrFocus("Singlebox"));
 Key.on("v", myModifiers, () => launchOrFocus("VLC"));
 Key.on("a", myModifiers, () => launchOrFocus("Anylist"));
 Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
+
+Key.on("l", ["shift", "control", "command"], lockScreen);
