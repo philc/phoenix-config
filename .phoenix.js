@@ -85,3 +85,14 @@ Key.on("m", myModifiers, () => maximizeWindow(Window.focused()));
 
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
 Key.on("y", myModifiers, () => launchOrFocus("Firefox"));
+Key.on("k", myModifiers, () => launchOrFocus("iTerm"));
+Key.on("j", myModifiers, () => launchOrFocus("Emacs"));
+Key.on("u", myModifiers, () => launchOrFocus("SuperHuman"));
+Key.on(",", myModifiers, () => launchOrFocus("Slack"));
+Key.on("n", myModifiers, () => launchOrFocus("Terminal"));
+Key.on("n", ["command", "control", "shift"], () => launchOrFocus("Spotify"));
+Key.on("o", myModifiers, () => launchOrFocus("Org"));
+Key.on("c", myModifiers, () => launchOrFocus("Singlebox"));
+Key.on("v", myModifiers, () => launchOrFocus("VLC"));
+Key.on("a", myModifiers, () => launchOrFocus("Anylist"));
+Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
