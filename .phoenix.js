@@ -1,33 +1,14 @@
-console.log("-----------------------------\n");
-
 Phoenix.set({
   daemon: false,
   openAtLogin: true
 })
 
-const w = Window.focused();
-
-const printObject = (o) => {
-  const s = [o.toString()];
-  for (let k in o) {
-    let value = o[k];
-    if (typeof(value) == "function")
-      value = "fn";
-    s.push(`  ${k}: ${value}`);
-  }
-  return s.join("\n");
-}
-
-const getSortedScreens = () => {
-  return Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
-}
-
 /*
- * whichScreen: an int indicating which screen. Screens are indexed from the left-most.
+ * whichScreen: an int indicating which screen. Screens are indexed from left to right.
  * whichHalf: one of "left", "right", "maximized".
  */
 const placeWindow = (window, whichScreen, whichHalf) => {
-  const screens = getSortedScreens();
+  const screens = Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
   // If whichScreen is greater than the number of screens, just use the last (right-most) screen. This will be
   // the case when using this configuration on a laptop with no external monitors connected.
   const screen = screens[Math.min(whichScreen, screens.length - 1)];
@@ -64,7 +45,6 @@ const launchOrFocus = (appName) => {
   // Chrome will instead just focus the main window. This can be reproduced easily outside of Phoenix
   // by command-tabbing to Chrome: when you do this, the main window will always be the one that gets the
   // focus. To work around this, uncheck "Displays have separate Spaces" in System Preferences.
-
   const window = app.windows()[0];
   if (window) {
     window.focus();
