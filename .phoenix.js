@@ -1,9 +1,8 @@
 console.log("-----------------------------\n");
 
-// TODO(philc)
 Phoenix.set({
   daemon: false,
-  openAtLogin: false
+  openAtLogin: true
 })
 
 const w = Window.focused();
