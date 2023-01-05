@@ -39,12 +39,6 @@ const centerWindow = (window) => {
   window.setFrame(destFrame);
 }
 
-const maximizeWindow = (window) => {
-  const frame = window.screen().flippedFrame();
-  const destFrame = { x: frame.x, y: frame.y, width: frame.width, height: frame.height };
-  window.setFrame(destFrame);
-};
-
 /*
  * Focuses the most recently accessed window of an app, if it's open. If it's not open, launch it.
  */
@@ -142,7 +136,7 @@ Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, 1));
 Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, 0));
 Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, 1));
 Key.on("5", myModifiers, () => centerWindow(Window.focused()));
-Key.on("m", myModifiers, () => maximizeWindow(Window.focused()));
+Key.on("m", myModifiers, () => Window.focused().maximize());
 
 // Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
