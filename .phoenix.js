@@ -80,8 +80,30 @@ const lockScreen = () => {
   });
 };
 
+const volumeModal = Modal.build({ duration: 0 });
+volumeModal.origin = { x: 0, y: 0 };
+
+const changeVolume = (increment) => {
+  Task.run("/Users/phil/scripts/macos/changevolume.rb", [increment.toString()], (task) => {
+    if (task.status != 0) {
+      Phoenix.notify("Change volume script did not successfully exit.");
+      return;
+    }
+    const newVolume = parseInt(task.output);
+    volumeModal.text = `Volume: ${newVolume}`;
+    if (volumeModal.displayTimer != null)
+      clearTimeout(volumeModal.displayTimer);
+    volumeModal.displayTimer = setTimeout(() => {
+      volumeModal.close();
+      volumeModal.displayTimer = null;
+    }, 1500);
+    volumeModal.show();
+  });
+};
+
 const myModifiers = ["command", "control"];
 
+// Window placement
 Key.on("1", myModifiers, () => placeWindow(Window.focused(), 1, 0));
 Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, 1));
 Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, 0));
@@ -89,6 +111,7 @@ Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, 1));
 Key.on("5", myModifiers, () => centerWindow(Window.focused()));
 Key.on("m", myModifiers, () => maximizeWindow(Window.focused()));
 
+// Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
 Key.on("y", myModifiers, () => launchOrFocus("Firefox"));
 Key.on("k", myModifiers, () => launchOrFocus("iTerm"));
@@ -103,4 +126,7 @@ Key.on("v", myModifiers, () => launchOrFocus("VLC"));
 Key.on("a", myModifiers, () => launchOrFocus("Anylist"));
 Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
 
-Key.on("l", ["shift", "control", "command"], lockScreen);
+// System functions
+Key.on("l", ["command", "control", "shift"], lockScreen);
+Key.on("9", myModifiers, () => changeVolume(-6));
+Key.on("0", myModifiers, () => changeVolume(6));
