@@ -101,6 +101,25 @@ const changeVolume = (increment) => {
   });
 };
 
+const timeModal = Modal.build({ duration: 4 });
+
+const showTime = () => {
+  const date = new Date();
+  // This returns "hh:mm:ss AM". Strip off the seconds.
+  const timeString = date.toLocaleTimeString().replace(/:\d\d /, " ");
+  // This returns "Tue May 12 2020". Strip off the year.
+  const dateString = date.toDateString().replace(/ \d\d\d\d/, "");
+  timeModal.text = `${timeString}\n${dateString}`;
+
+  const modalFrame = timeModal.frame();
+  const focusedWindow = Window.focused();
+  const screen = focusedWindow ? focusedWindow.screen() : Screen.main();
+  const screenFrame = screen.flippedFrame();
+  timeModal.origin = { x: screenFrame.x + (screenFrame.width - modalFrame.width) / 2,
+                       y: screenFrame.y + (screenFrame.height - modalFrame.height) / 2 };
+  timeModal.show();
+};
+
 /*
  * Hides every app, except the frontmost (focused) app.
  */
@@ -145,3 +164,4 @@ Key.on("l", ["command", "control", "shift"], lockScreen);
 Key.on("9", myModifiers, () => changeVolume(-6));
 Key.on("0", myModifiers, () => changeVolume(6));
 Key.on("h", ["command", "shift"], hideUnfocusedApps);
+Key.on("t", myModifiers, showTime);
