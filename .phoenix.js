@@ -101,6 +101,20 @@ const changeVolume = (increment) => {
   });
 };
 
+/*
+ * Hides every app, except the frontmost (focused) app.
+ */
+const hideUnfocusedApps = () => {
+  const focused = App.focused();
+  const focusedPid = focused.processIdentifier();
+  const allApps = App.all();
+  for (let app of allApps) {
+    if (app.processIdentifier() != focusedPid) {
+      app.hide();
+    }
+  }
+};
+
 const myModifiers = ["command", "control"];
 
 // Window placement
@@ -130,3 +144,4 @@ Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
 Key.on("l", ["command", "control", "shift"], lockScreen);
 Key.on("9", myModifiers, () => changeVolume(-6));
 Key.on("0", myModifiers, () => changeVolume(6));
+Key.on("h", ["command", "shift"], hideUnfocusedApps);
