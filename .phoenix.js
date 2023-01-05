@@ -27,7 +27,10 @@ const getSortedScreens = () => {
  * whichHalf: one of "left", "right", "maximized".
  */
 const placeWindow = (window, whichScreen, whichHalf) => {
-  const screen = getSortedScreens()[whichScreen];
+  const screens = getSortedScreens();
+  // If whichScreen is greater than the number of screens, just use the last (right-most) screen. This will be
+  // the case when using this configuration on a laptop with no external monitors connected.
+  const screen = screens[Math.min(whichScreen, screens.length - 1)];
   const frame = screen.flippedFrame();
   const width = whichHalf == "maximized" ? frame.width: frame.width / 2;
   const x = frame.x + (whichHalf == "right" ? width : 0);
