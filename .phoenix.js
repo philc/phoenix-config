@@ -82,23 +82,47 @@ const changeVolume = (increment) => {
   });
 };
 
-const timeModal = Modal.build({ duration: 4 });
+const timeModal = Modal.build({ duration: 2 });
+
+/*
+ * Returns a Promise which yields the battery percent as a Number.
+ */
+const getBatteryPercent = () => {
+  // The output of `pmset -g batt` looks like:
+  // Now drawing from 'Battery Power'\n "-InternalBattery-0 (id=22413411)       82.5%;
+  return new Promise((resolve, reject) => {
+    Task.run("/usr/bin/pmset", ["-g", "batt"], (task) => {
+      if (task.status != 0) {
+        Phoenix.notify("pmset -g batt did not successfully exit.");
+        reject();
+      }
+      const match = task.output.match(/([0-9.]+)%;/);
+      const percent = new Number(match[1]);
+      resolve(percent);
+    });
+  });
+}
 
 const showTime = () => {
-  const date = new Date();
-  // This returns "hh:mm:ss AM". Strip off the seconds.
-  const timeString = date.toLocaleTimeString().replace(/:\d\d /, " ");
-  // This returns "Tue May 12 2020". Strip off the year.
-  const dateString = date.toDateString().replace(/ \d\d\d\d/, "");
-  timeModal.text = `${timeString}\n${dateString}`;
+  getBatteryPercent().then((batteryPercent) => {
+    const date = new Date();
+    // This returns "hh:mm:ss AM". Strip off the seconds.
+    const timeString = date.toLocaleTimeString().replace(/:\d\d /, " ");
+    // This returns "Tue May 12 2020". Strip off the year.
+    const dateString = date.toDateString().replace(/ \d\d\d\d/, "");
+    timeModal.text = `${timeString}\n${dateString}\n${batteryPercent}%`;
 
-  const modalFrame = timeModal.frame();
-  const focusedWindow = Window.focused();
-  const screen = focusedWindow ? focusedWindow.screen() : Screen.main();
-  const screenFrame = screen.flippedFrame();
-  timeModal.origin = { x: screenFrame.x + (screenFrame.width - modalFrame.width) / 2,
-                       y: screenFrame.y + (screenFrame.height - modalFrame.height) / 2 };
-  timeModal.show();
+    const modalFrame = timeModal.frame();
+    const focusedWindow = Window.focused();
+    const screen = focusedWindow ? focusedWindow.screen() : Screen.main();
+    const screenFrame = screen.flippedFrame();
+    timeModal.origin = { x: screenFrame.x + (screenFrame.width - modalFrame.width) / 2,
+                         y: screenFrame.y + (screenFrame.height - modalFrame.height) / 2 };
+    timeModal.show();
+    // I saw that the `duration` parameter on timeModal isn't reliable when the timeModal is shown via a
+    // setTimeout, so here we're manually closing it.
+    setTimeout(() => timeModal.close(), 2000);
+  });
 };
 
 /*
