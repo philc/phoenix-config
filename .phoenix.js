@@ -211,7 +211,7 @@ const windowLayout = {
   "Singlebox": [2, "left"],
   "Slack": [1, "right"],
   "Spotify": [2, "left"],
-  "SuperHuman": [1, "left"],
+  "Superhuman": [1, "left"],
   "System Preferences": [1, "left"],
   "Terminal": [1, "left"],
   "WhatsApp": [1, "right"],
@@ -234,7 +234,7 @@ Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
 Key.on("y", myModifiers, () => launchOrFocus("Firefox"));
 Key.on("k", myModifiers, () => launchOrFocus("iTerm"));
 Key.on("j", myModifiers, () => launchOrFocus("Emacs"));
-Key.on("u", myModifiers, () => launchOrFocus("SuperHuman"));
+Key.on("u", myModifiers, () => launchOrFocus("Superhuman"));
 Key.on(",", myModifiers, () => launchOrFocus("Slack"));
 Key.on("n", myModifiers, () => launchOrFocus("Terminal"));
 Key.on("n", ["command", "control", "shift"], () => launchOrFocus("Spotify"));
