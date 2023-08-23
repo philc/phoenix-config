@@ -5,17 +5,21 @@ Phoenix.set({
 
 /*
  * whichScreen: an int indicating which screen. Screens are indexed from left to right.
- * whichHalf: one of "left", "right", "maximized".
+ * whichSide: one of "left", "right", "full".
+ * width: A number between 0 and 1 indicating how much of the screen to use. Half screen = 0.5. Optional.
  */
-const placeWindow = (window, whichScreen, whichHalf) => {
+const placeWindow = (window, whichScreen, whichSide, width) => {
+  if (width == null) {
+    width = (whichSide == "full") ? 1.0 : 0.5;
+  }
   const screens = Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
   // If whichScreen is greater than the number of screens, just use the last (right-most) screen. This will be
   // the case when using this configuration on a laptop with no external monitors connected.
   const screen = screens[Math.min(whichScreen, screens.length - 1)];
   const frame = screen.flippedFrame();
-  const width = whichHalf == "maximized" ? frame.width: frame.width / 2;
-  const x = frame.x + (whichHalf == "right" ? width : 0);
-  const destFrame = { x: x, y: frame.y, width: width, height: frame.height };
+  const windowWidth = frame.width * width;
+  const x = frame.x + (whichSide == "right" ? (frame.width - windowWidth) : 0);
+  const destFrame = { x: x, y: frame.y, width: windowWidth, height: frame.height };
   window.setFrame(destFrame);
 }
 
@@ -201,10 +205,10 @@ const launchFuzzyFinder = () => {
 // Where I generally want my windows.
 const windowLayout = {
   "AnyList": [1, "right"],
-  "Emacs": [2, "maximized"],
+  "Emacs": [2, "full"],
   "Firefox": [1, "right"],
-  "Google Chrome": [1, "maximized"],
-  "iTerm2": [1, "maximized"],
+  "Google Chrome": [1, "full"],
+  "iTerm2": [1, "full"],
   "Org": [1, "right"],
   "PowerPoint": [1, "left"],
   "SimpleNote": [1, "right"],
@@ -226,6 +230,8 @@ Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, "right"));
 Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, "left"));
 Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, "right"));
 Key.on("5", myModifiers, () => centerWindow(Window.focused()));
+Key.on("6", myModifiers, () => placeWindow(Window.focused(), 2, "left", 0.25));
+Key.on("7", myModifiers, () => placeWindow(Window.focused(), 2, "right", 0.25));
 Key.on("m", myModifiers, () => Window.focused().maximize());
 Key.on("'", myModifiers, () => applyLayout(windowLayout));
 
