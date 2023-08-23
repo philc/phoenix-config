@@ -1,27 +1,35 @@
 Phoenix.set({
   daemon: false,
-  openAtLogin: true
-})
+  openAtLogin: true,
+});
 
 /*
  * whichScreen: an int indicating which screen. Screens are indexed from left to right.
  * whichSide: one of "left", "right", "full".
- * width: A number between 0 and 1 indicating how much of the screen to use. Half screen = 0.5. Optional.
+ * width: A number between 0 and 1 indicating how much of the screen to use. Half screen = 0.5.
  */
 const placeWindow = (window, whichScreen, whichSide, width) => {
   if (width == null) {
     width = (whichSide == "full") ? 1.0 : 0.5;
   }
-  const screens = Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
-  // If whichScreen is greater than the number of screens, just use the last (right-most) screen. This will be
-  // the case when using this configuration on a laptop with no external monitors connected.
+  const screens = Screen.all().sort((a, b) =>
+    a.flippedFrame().x - b.flippedFrame().x
+  );
+  // If whichScreen is greater than the number of screens, just use the last (right-most) screen.
+  // This will be the case when using this configuration on a laptop with no external monitors
+  // connected.
   const screen = screens[Math.min(whichScreen, screens.length - 1)];
   const frame = screen.flippedFrame();
   const windowWidth = frame.width * width;
   const x = frame.x + (whichSide == "right" ? (frame.width - windowWidth) : 0);
-  const destFrame = { x: x, y: frame.y, width: windowWidth, height: frame.height };
+  const destFrame = {
+    x: x,
+    y: frame.y,
+    width: windowWidth,
+    height: frame.height,
+  };
   window.setFrame(destFrame);
-}
+};
 
 const centerWindow = (window) => {
   const frame = window.screen().flippedFrame();
@@ -29,26 +37,29 @@ const centerWindow = (window) => {
   const x = frame.x + width / 2;
   const destFrame = { x: x, y: frame.y, width: width, height: frame.height };
   window.setFrame(destFrame);
-}
+};
 
 /*
  * Focuses the most recently accessed window of an app, if it's open. If it's not open, launch it.
  */
 const launchOrFocus = (appName) => {
-  const  app = App.get(appName);
+  const app = App.get(appName);
   if (!app) {
     if (!App.launch(appName, { focus: true })) {
-      Phoenix.notify(`Failed to launch app "${appName}". Maybe it's not installed?`);
+      Phoenix.notify(
+        `Failed to launch app "${appName}". Maybe it's not installed?`,
+      );
     }
     return;
   }
 
-  // NOTE(philc): app.windows() returns windows in the most recently-accessed order. However, sometimes
-  // the app implements its own window selection and focusing behavior when the app is activated. This is
-  // empirically the case with Google Chrome: if you try to focus a window which is not the "main window",
-  // Chrome will instead just focus the main window. This can be reproduced easily outside of Phoenix
-  // by command-tabbing to Chrome: when you do this, the main window will always be the one that gets the
-  // focus. To work around this, uncheck "Displays have separate Spaces" in System Preferences.
+  // NOTE(philc): app.windows() returns windows in the most recently-accessed order. However,
+  // sometimes the app implements its own window selection and focusing behavior when the app is
+  // activated. This is empirically the case with Google Chrome: if you try to focus a window which
+  // is not the "main window", Chrome will instead just focus the main window. This can be
+  // reproduced easily outside of Phoenix by command-tabbing to Chrome: when you do this, the main
+  // window will always be the one that gets the focus. To work around this, uncheck "Displays have
+  // separate Spaces" in System Preferences.
   const window = app.windows()[0];
   if (window) {
     window.focus();
@@ -60,8 +71,9 @@ const launchOrFocus = (appName) => {
 
 const lockScreen = () => {
   Task.run("/Users/phil/scripts/macos/lock_screen.sh", [], (task) => {
-    if (task.status != 0)
+    if (task.status != 0) {
       Phoenix.notify("Lock screen script did not successfully exit.");
+    }
   });
 };
 
@@ -69,21 +81,26 @@ const volumeModal = Modal.build({ duration: 0 });
 volumeModal.origin = { x: 0, y: 0 };
 
 const changeVolume = (increment) => {
-  Task.run("/Users/phil/scripts/macos/changevolume.rb", [increment.toString()], (task) => {
-    if (task.status != 0) {
-      Phoenix.notify("Change volume script did not successfully exit.");
-      return;
-    }
-    const newVolume = parseInt(task.output);
-    volumeModal.text = `Volume: ${newVolume}`;
-    if (volumeModal.displayTimer != null)
-      clearTimeout(volumeModal.displayTimer);
-    volumeModal.displayTimer = setTimeout(() => {
-      volumeModal.close();
-      volumeModal.displayTimer = null;
-    }, 1500);
-    volumeModal.show();
-  });
+  Task.run(
+    "/Users/phil/scripts/macos/changevolume.rb",
+    [increment.toString()],
+    (task) => {
+      if (task.status != 0) {
+        Phoenix.notify("Change volume script did not successfully exit.");
+        return;
+      }
+      const newVolume = parseInt(task.output);
+      volumeModal.text = `Volume: ${newVolume}`;
+      if (volumeModal.displayTimer != null) {
+        clearTimeout(volumeModal.displayTimer);
+      }
+      volumeModal.displayTimer = setTimeout(() => {
+        volumeModal.close();
+        volumeModal.displayTimer = null;
+      }, 1500);
+      volumeModal.show();
+    },
+  );
 };
 
 const timeModal = Modal.build({ duration: 2 });
@@ -105,7 +122,7 @@ const getBatteryPercent = () => {
       resolve(percent);
     });
   });
-}
+};
 
 const showTime = () => {
   getBatteryPercent().then((batteryPercent) => {
@@ -120,11 +137,13 @@ const showTime = () => {
     const focusedWindow = Window.focused();
     const screen = focusedWindow ? focusedWindow.screen() : Screen.main();
     const screenFrame = screen.flippedFrame();
-    timeModal.origin = { x: screenFrame.x + (screenFrame.width - modalFrame.width) / 2,
-                         y: screenFrame.y + (screenFrame.height - modalFrame.height) / 2 };
+    timeModal.origin = {
+      x: screenFrame.x + (screenFrame.width - modalFrame.width) / 2,
+      y: screenFrame.y + (screenFrame.height - modalFrame.height) / 2,
+    };
     timeModal.show();
-    // I saw that the `duration` parameter on timeModal isn't reliable when the timeModal is shown via a
-    // setTimeout, so here we're manually closing it.
+    // I saw that the `duration` parameter on timeModal isn't reliable when the timeModal is shown
+    // via a setTimeout, so here we're manually closing it.
     setTimeout(() => timeModal.close(), 2000);
   });
 };
@@ -150,14 +169,16 @@ const hideUnfocusedApps = () => {
 const applyLayout = (layout) => {
   for (let [appName, properties] of Object.entries(layout)) {
     const app = App.get(appName);
-    if (!app)
+    if (!app) {
       continue;
+    }
     const windows = app.windows({ visible: true });
     const [whichScreen, whichHalf] = properties;
-    for (let window of windows)
+    for (let window of windows) {
       placeWindow(window, whichScreen, whichHalf);
+    }
   }
-}
+};
 
 // Where I generally want my windows.
 const windowLayout = {
@@ -176,7 +197,7 @@ const windowLayout = {
   "System Preferences": [1, "left"],
   "Terminal": [1, "left"],
   "WhatsApp": [1, "right"],
-  "Xcode": [1, "right"]
+  "Xcode": [1, "right"],
 };
 
 const myModifiers = ["command", "control"];
