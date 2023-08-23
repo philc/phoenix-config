@@ -213,3 +213,6 @@ Key.on("9", myModifiers, () => changeVolume(-6));
 Key.on("0", myModifiers, () => changeVolume(6));
 Key.on("h", ["command", "shift"], hideUnfocusedApps);
 Key.on("t", myModifiers, showTime);
+
+// I sometimes use this shortcut for screen casting.
+// Key.on("d", myModifiers, () => Window.focused().setSize({ width: 1280, height: 880 }));
