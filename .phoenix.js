@@ -159,49 +159,6 @@ const applyLayout = (layout) => {
   }
 }
 
-// This is an Alfred/Launchbar replacement I've strung together using fzf, Kitty, and some scripting.
-const launchFuzzyFinder = () => {
-  // Close any existing windows in Kitty, so that one can't hit the fuzzy finder hotkey many times and get
-  // overlapping windows.
-  let app = App.get("kitty");
-  if (app) {
-    for (let w of app.windows()) {
-      w.close();
-    }
-  }
-
-  const focusedWindow = Window.focused();
-  const screen = focusedWindow ? focusedWindow.screen() : Screen.main();
-
-  Task.run("/bin/bash", ["-c", "/Users/phil/scripts/macos/file-chooser/invoke-kitty.sh &"]);
-
-  // Once the Kitty app has created the fuzzy finder window, center it on the current screen. This has a small
-  // amount of latency and thus has some jank. I tried many ways to remove the jank, but it's not possible
-  // using an outside->in (Phoenix->Kitty) approach.
-  const maxAttempts = 50;
-  let attempts = 0;
-  let intervalTimer = setInterval(() => {
-    attempts++;
-    if (attempts > maxAttempts)
-      clearInterval(intervalTimer);
-    if (!app)
-      app = App.get("kitty");
-    if (!app)
-      return;
-    const window = app.windows()[0];
-    if (!window)
-      return;
-
-    clearInterval(intervalTimer);
-    const screenFrame = screen.flippedFrame();
-    const windowFrame = window.frame();
-    const destOrigin = { x: screenFrame.x + (screenFrame.width - windowFrame.width) / 2,
-                         y: screenFrame.y + (screenFrame.height - windowFrame.height) / 2};
-    window.setTopLeft(destOrigin);
-  }, 20);
-
-};
-
 // Where I generally want my windows.
 const windowLayout = {
   "AnyList": [1, "right"],
@@ -249,7 +206,6 @@ Key.on("c", myModifiers, () => launchOrFocus("Singlebox"));
 Key.on("v", myModifiers, () => launchOrFocus("VLC"));
 Key.on("a", myModifiers, () => launchOrFocus("Anylist"));
 Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
-Key.on("space", ["command"], launchFuzzyFinder);
 
 // System functions
 Key.on("l", ["command", "control", "shift"], lockScreen);
