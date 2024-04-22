@@ -190,7 +190,7 @@ const windowLayout = {
   "Org": [1, "right"],
   "PowerPoint": [1, "left"],
   "SimpleNote": [1, "right"],
-  "Singlebox": [2, "left"],
+  "Google Calendar": [2, "left"],
   "Slack": [1, "right"],
   "Spotify": [2, "left"],
   "Superhuman": [1, "left"],
@@ -223,7 +223,7 @@ Key.on(",", myModifiers, () => launchOrFocus("Slack"));
 Key.on("n", myModifiers, () => launchOrFocus("Terminal"));
 Key.on("n", ["command", "control", "shift"], () => launchOrFocus("Spotify"));
 Key.on("o", myModifiers, () => launchOrFocus("Org"));
-Key.on("c", myModifiers, () => launchOrFocus("Singlebox"));
+Key.on("c", myModifiers, () => launchOrFocus("Google Calendar")); // A WebCatalog SSB.
 Key.on("v", myModifiers, () => launchOrFocus("VLC"));
 Key.on("a", myModifiers, () => launchOrFocus("Anylist"));
 Key.on("s", myModifiers, () => launchOrFocus("SimpleNote"));
