@@ -12,9 +12,7 @@ const placeWindow = (window, whichScreen, whichSide, width) => {
   if (width == null) {
     width = (whichSide == "full") ? 1.0 : 0.5;
   }
-  const screens = Screen.all().sort((a, b) =>
-    a.flippedFrame().x - b.flippedFrame().x
-  );
+  const screens = Screen.all().sort((a, b) => a.flippedFrame().x - b.flippedFrame().x);
   // If whichScreen is greater than the number of screens, just use the last (right-most) screen.
   // This will be the case when using this configuration on a laptop with no external monitors
   // connected.
@@ -240,4 +238,4 @@ Key.on("h", ["command", "shift"], hideUnfocusedApps);
 Key.on("t", myModifiers, showTime);
 
 // I sometimes use this shortcut for screen casting.
-// Key.on("d", myModifiers, () => Window.focused().setSize({ width: 1280, height: 880 }));
+Key.on("d", myModifiers, () => Window.focused().setSize({ width: 1280, height: 880 }));
