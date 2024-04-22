@@ -216,6 +216,7 @@ Key.on("'", myModifiers, () => applyLayout(windowLayout));
 // Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
 Key.on("y", myModifiers, () => launchOrFocus("Firefox"));
+Key.on("u", ["command", "control", "shift"], () => launchOrFocus("Chromium"));
 Key.on("k", myModifiers, () => launchOrFocus("iTerm"));
 Key.on("j", myModifiers, () => launchOrFocus("Emacs"));
 Key.on("u", myModifiers, () => launchOrFocus("Superhuman"));
