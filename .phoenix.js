@@ -18,7 +18,10 @@ const placeWindow = (window, whichScreen, whichSide, width) => {
   // If whichScreen is greater than the number of screens, just use the last (right-most) screen.
   // This will be the case when using this configuration on a laptop with no external monitors
   // connected.
-  const screen = screens[Math.min(whichScreen, screens.length - 1)];
+  let screen = screens[Math.min(whichScreen, screens.length - 1)];
+  // When there are only two screens, place every window on the external monitor. We the laptop is
+  // the leftmost screen.
+  if (screens.length == 2) screen = screens[1];
   const frame = screen.flippedFrame();
   const windowWidth = frame.width * width;
   const x = frame.x + (whichSide == "right" ? (frame.width - windowWidth) : 0);
