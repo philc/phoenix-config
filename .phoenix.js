@@ -17,9 +17,10 @@ const placeWindow = (window, whichScreen, whichSide, width) => {
   // This will be the case when using this configuration on a laptop with no external monitors
   // connected.
   let screen = screens[Math.min(whichScreen, screens.length - 1)];
-  // When there are only two screens, place every window on the external monitor. We the laptop is
-  // the leftmost screen.
-  if (screens.length == 2) screen = screens[1];
+  // When there are only two screens, place every window on the external monitor. The laptop is the
+  // leftmost screen.
+  // TODO: more smartly detect if there's a laptop vs. two external monitors with the laptop closed.
+  // if (screens.length == 2) screen = screens[1];
   const frame = screen.flippedFrame();
   const windowWidth = frame.width * width;
   const x = frame.x + (whichSide == "right" ? (frame.width - windowWidth) : 0);
@@ -183,34 +184,34 @@ const applyLayout = (layout) => {
 
 // Where I generally want my windows.
 const windowLayout = {
-  "AnyList": [1, "right"],
-  "Emacs": [2, "full"],
-  "Firefox": [1, "right"],
+  "AnyList": [1, "left"],
+  "Emacs": [0, "full"],
+  "Firefox": [1, "left"],
   "Google Chrome": [1, "full"],
   "iTerm2": [1, "full"],
-  "Org": [1, "right"],
-  "PowerPoint": [1, "left"],
-  "SimpleNote": [1, "right"],
-  "Google Calendar": [2, "left"],
-  "Slack": [1, "right"],
-  "Spotify": [2, "left"],
-  "Superhuman": [1, "left"],
+  "Org": [1, "left"],
+  "PowerPoint": [1, "right"],
+  "SimpleNote": [1, "left"],
+  "Google Calendar": [1, "left"],
+  "Slack": [1, "left"],
+  "Spotify": [1, "left"],
+  "Superhuman": [0, "right"],
   "System Preferences": [1, "left"],
-  "Terminal": [1, "left"],
-  "WhatsApp": [1, "right"],
-  "Xcode": [1, "right"],
+  "Terminal": [1, "right"],
+  "WhatsApp": [1, "left"],
+  "Xcode": [1, "left"],
 };
 
 const myModifiers = ["command", "control"];
 
 // Window placement
-Key.on("1", myModifiers, () => placeWindow(Window.focused(), 1, "left"));
-Key.on("2", myModifiers, () => placeWindow(Window.focused(), 1, "right"));
-Key.on("3", myModifiers, () => placeWindow(Window.focused(), 2, "left"));
-Key.on("4", myModifiers, () => placeWindow(Window.focused(), 2, "right"));
+Key.on("1", myModifiers, () => placeWindow(Window.focused(), 0, "left"));
+Key.on("2", myModifiers, () => placeWindow(Window.focused(), 0, "right"));
+Key.on("3", myModifiers, () => placeWindow(Window.focused(), 1, "left"));
+Key.on("4", myModifiers, () => placeWindow(Window.focused(), 1, "right"));
 Key.on("5", myModifiers, () => centerWindow(Window.focused()));
-Key.on("6", myModifiers, () => placeWindow(Window.focused(), 2, "left", 0.25));
-Key.on("7", myModifiers, () => placeWindow(Window.focused(), 2, "right", 0.25));
+Key.on("6", myModifiers, () => placeWindow(Window.focused(), 1, "left", 0.25));
+Key.on("7", myModifiers, () => placeWindow(Window.focused(), 1, "right", 0.25));
 Key.on("m", myModifiers, () => Window.focused().maximize());
 Key.on("'", myModifiers, () => applyLayout(windowLayout));
 
