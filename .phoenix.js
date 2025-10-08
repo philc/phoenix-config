@@ -1,8 +1,3 @@
-Phoenix.set({
-  daemon: false,
-  openAtLogin: true,
-});
-
 /*
  * whichScreen: an int indicating which screen. Screens are indexed from left to right.
  * whichSide: one of "left", "right", "full".
@@ -186,17 +181,19 @@ const applyLayout = (layout) => {
 const windowLayout = {
   "AnyList": [1, "left"],
   "Emacs": [0, "full"],
+  "Finder": [1, "right"],
   "Firefox": [1, "left"],
+  "Google Calendar": [1, "left"],
   "Google Chrome": [1, "full"],
+  "Google Chrome Beta": [1, "left"],
   "iTerm2": [1, "full"],
   "Org": [1, "left"],
   "PowerPoint": [1, "right"],
   "SimpleNote": [1, "left"],
-  "Google Calendar": [1, "left"],
   "Slack": [1, "left"],
   "Spotify": [1, "left"],
+  "System Settings": [1, "right"],
   "Superhuman": [0, "right"],
-  "System Preferences": [1, "left"],
   "Terminal": [1, "right"],
   "WhatsApp": [1, "left"],
   "Xcode": [1, "left"],
@@ -218,7 +215,7 @@ Key.on("'", myModifiers, () => applyLayout(windowLayout));
 // Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
 Key.on("y", myModifiers, () => launchOrFocus("Firefox"));
-Key.on("u", ["command", "control", "shift"], () => launchOrFocus("Chromium"));
+Key.on("u", ["command", "control", "shift"], () => launchOrFocus("Google Chrome Beta"));
 Key.on("k", myModifiers, () => launchOrFocus("iTerm"));
 Key.on("j", myModifiers, () => launchOrFocus("Emacs"));
 Key.on("u", myModifiers, () => launchOrFocus("Superhuman"));
