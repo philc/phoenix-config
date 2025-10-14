@@ -180,6 +180,7 @@ const applyLayout = (layout) => {
 // Where I generally want my windows.
 const windowLayout = {
   "AnyList": [1, "left"],
+  "Brave Browser": [1, "full"],
   "Emacs": [0, "full"],
   "Finder": [1, "right"],
   "Firefox": [1, "left"],
