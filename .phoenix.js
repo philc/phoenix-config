@@ -37,6 +37,17 @@ function centerWindow(window) {
 }
 
 /*
+ * Sizes windows for the purposes of taking a screenshot. Rarely used.
+ */
+function sizeWindowForScreenshots() {
+  const window = Window.focused();
+  if (!window) return;
+  const width = 1280;
+  const height = 800;
+  window.setFrame({ width, height});
+}
+
+/*
  * Focuses the most recently accessed window of an app, if it's open. If it's not open, launch it.
  */
 function launchOrFocus(appName) {
@@ -212,6 +223,7 @@ Key.on("6", myModifiers, () => placeWindow(Window.focused(), 1, "left", 0.25));
 Key.on("7", myModifiers, () => placeWindow(Window.focused(), 1, "right", 0.25));
 Key.on("m", myModifiers, () => Window.focused().maximize());
 Key.on("'", myModifiers, () => applyLayout(windowLayout));
+// Key.on("8", myModifiers, () => sizeWindowForScreenshots());
 
 // Application focusing
 Key.on("l", myModifiers, () => launchOrFocus("Google Chrome"));
