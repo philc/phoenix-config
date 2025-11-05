@@ -3,7 +3,7 @@
  * whichSide: one of "left", "right", "full".
  * width: A number between 0 and 1 indicating how much of the screen to use. Half screen = 0.5.
  */
-const placeWindow = (window, whichScreen, whichSide, width) => {
+function placeWindow(window, whichScreen, whichSide, width) {
   if (width == null) {
     width = (whichSide == "full") ? 1.0 : 0.5;
   }
@@ -26,20 +26,20 @@ const placeWindow = (window, whichScreen, whichSide, width) => {
     height: frame.height,
   };
   window.setFrame(destFrame);
-};
+}
 
-const centerWindow = (window) => {
+function centerWindow(window) {
   const frame = window.screen().flippedFrame();
   const width = frame.width / 2;
   const x = frame.x + width / 2;
   const destFrame = { x: x, y: frame.y, width: width, height: frame.height };
   window.setFrame(destFrame);
-};
+}
 
 /*
  * Focuses the most recently accessed window of an app, if it's open. If it's not open, launch it.
  */
-const launchOrFocus = (appName) => {
+function launchOrFocus(appName) {
   const app = App.get(appName);
   if (!app) {
     if (!App.launch(appName, { focus: true })) {
@@ -64,20 +64,20 @@ const launchOrFocus = (appName) => {
     // The app may have no windows yet. If so, just focus the app.
     app.focus();
   }
-};
+}
 
-const lockScreen = () => {
+function lockScreen() {
   Task.run("/Users/phil/scripts/macos/lock_screen.sh", [], (task) => {
     if (task.status != 0) {
       Phoenix.notify("Lock screen script did not successfully exit.");
     }
   });
-};
+}
 
 const volumeModal = Modal.build({ duration: 0 });
 volumeModal.origin = { x: 0, y: 0 };
 
-const changeVolume = (increment) => {
+function changeVolume(increment) {
   Task.run(
     "/Users/phil/scripts/macos/changevolume.rb",
     [increment.toString()],
@@ -98,14 +98,12 @@ const changeVolume = (increment) => {
       volumeModal.show();
     },
   );
-};
-
-const timeModal = Modal.build({ duration: 2 });
+}
 
 /*
  * Returns a Promise which yields the battery percent as a Number.
  */
-const getBatteryPercent = () => {
+function getBatteryPercent() {
   // The output of `pmset -g batt` looks like:
   // Now drawing from 'Battery Power'\n "-InternalBattery-0 (id=22413411)       82.5%;
   return new Promise((resolve, reject) => {
@@ -119,9 +117,11 @@ const getBatteryPercent = () => {
       resolve(percent);
     });
   });
-};
+}
 
-const showTime = () => {
+const timeModal = Modal.build({ duration: 2 });
+
+function showTime() {
   getBatteryPercent().then((batteryPercent) => {
     const date = new Date();
     // This returns "hh:mm:ss AM". Strip off the seconds.
@@ -143,12 +143,12 @@ const showTime = () => {
     // via a setTimeout, so here we're manually closing it.
     setTimeout(() => timeModal.close(), 2000);
   });
-};
+}
 
 /*
  * Hides every app, except the frontmost (focused) app.
  */
-const hideUnfocusedApps = () => {
+function hideUnfocusedApps() {
   const focused = App.focused();
   const focusedPid = focused.processIdentifier();
   const allApps = App.all();
@@ -157,13 +157,13 @@ const hideUnfocusedApps = () => {
       app.hide();
     }
   }
-};
+}
 
 /*
  * Moves all windows to thier defined position in the given layout.
  * layout: a map of app name => [whichScreen, whichHalf]. See placeWindow().
  */
-const applyLayout = (layout) => {
+function applyLayout(layout) {
   for (let [appName, properties] of Object.entries(layout)) {
     const app = App.get(appName);
     if (!app) {
@@ -175,7 +175,7 @@ const applyLayout = (layout) => {
       placeWindow(window, whichScreen, whichHalf);
     }
   }
-};
+}
 
 // Where I generally want my windows.
 const windowLayout = {
