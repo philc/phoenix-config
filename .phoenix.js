@@ -44,7 +44,7 @@ function sizeWindowForScreenshots() {
   if (!window) return;
   const width = 1280;
   const height = 800;
-  window.setFrame({ width, height});
+  window.setFrame({ width, height });
 }
 
 /*
@@ -68,11 +68,15 @@ function launchOrFocus(appName) {
   // reproduced easily outside of Phoenix by command-tabbing to Chrome: when you do this, the main
   // window will always be the one that gets the focus. To work around this, uncheck "Displays have
   // separate Spaces" in System Preferences.
-  const window = app.windows()[0];
-  if (window) {
-    window.focus();
+  const windows = app.windows();
+  // Don't focus (and thus unminimize) a window that's minimized. In that case, just focus the app.
+  // I run into this often when I have minimized windows in Chrome that I'll get to later, and just
+  // want to focus Chrome the app so I can open a fresh window with cmd-n.
+  const visibleWindow = windows.find((w) => !w.isMinimized());
+
+  if (visibleWindow) {
+    visibleWindow.focus();
   } else {
-    // The app may have no windows yet. If so, just focus the app.
     app.focus();
   }
 }
